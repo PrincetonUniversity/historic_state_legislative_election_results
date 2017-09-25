@@ -40,65 +40,65 @@ they in fact ran only on one party's platform. These errors are corrected in SLE
 
 #### First election using Single Member Districts, State By State
 ##### States that eliminated Multimember districts before 1960
-California
-Delaware
-Kansas
-Kentucky
-Missouri
-New York
-Utah
-Wisconsin
+California  
+Delaware  
+Kansas  
+Kentucky   
+Missouri  
+New York  
+Utah  
+Wisconsin   
 
 ##### States that eliminated Multimember districts between 1960 and 1972
-Parenthetical is first election using single-member districts
-Michigan (1964)
-Oklahoma (1964)
-Connecticut (1966)
-New Mexico (1966)
-Pennsylvania (1966)
-Rhode Island (1966)
-Ohio (1966)
-Colorado (1968)
-Iowa (1968)
-Louisiana (1971)
-Massachusetts (1972)
-Minnesota (1972)
-Nevada (1972)
-Oregon (1972)
-Tennessee (1972)
+##### Parenthetical is first election using single-member districts
+Michigan (1964)  
+Oklahoma (1964)  
+Connecticut (1966)  
+New Mexico (1966)  
+Pennsylvania (1966)  
+Rhode Island (1966)  
+Ohio (1966)  
+Colorado (1968)  
+Iowa (1968)  
+Louisiana (1971)  
+Massachusetts (1972)  
+Minnesota (1972)  
+Nevada (1972)  
+Oregon (1972)  
+Tennessee (1972)  
 
 ##### States that eliminated Multimember districts between 1974 and 1985
-Parenthetical is first election using single-member districts
-Montana (1974)
-South Carolina (1974)
-Alabama (1974)
-Texas (1976)
-Maine (1976)
-Mississippi (1979)
-Arkansas (1982) [still had 1 multimember district until at least 2002, but removed most MMDs before 1982 election]
-Florida (1982)
-Hawaii (1982)
-Illinois (1982)
-Virginia (1984)
+##### Parenthetical is first election using single-member districts
+Montana (1974)  
+South Carolina (1974)  
+Alabama (1974)  
+Texas (1976)  
+Maine (1976)  
+Mississippi (1979)  
+Arkansas (1982) [still had 1 multimember district until at least 2002, but removed most MMDs before 1982 election]  
+Florida (1982)  
+Hawaii (1982)  
+Illinois (1982)  
+Virginia (1984)  
 
 ##### States using multimember districts after 1985
-Alaska (switched for 1992 election)
-Georgia (switched to SMD for 1992 election; switched back to MMD in 2002 election, but reverted to SMD for 2004)
-Indiana (switched for 1992 election)
-Wyoming (switched for 1992 election)
-North Carolina (switched for 2002 election)
+Alaska (switched for 1992 election)  
+Georgia (switched to SMD for 1992 election; switched back to MMD in 2002 election, but reverted to SMD for 2004)  
+Indiana (switched for 1992 election)  
+Wyoming (switched for 1992 election)  
+North Carolina (switched for 2002 election)  
 
 ##### States using multimember districts after 2010
-Arizona
-Idaho
-Maryland
-New Hampshire
-New Jersey
-North Dakota
-South Dakota
-Vermont
-Washington
-West Virginia
+Arizona  
+Idaho  
+Maryland  
+New Hampshire  
+New Jersey  
+North Dakota  
+South Dakota  
+Vermont  
+Washington  
+West Virginia  
 
 ##### Sources:
 [The Impact of Multimember Districts on Party Representation in U. S. State Legislatures](http://www.jstor.org/stable/440068?seq=1#page_scan_tab_contents), Richard G. Niemi, Jeffrey S. Hill and Bernard Grofman, Legislative Studies Quarterly, Vol. 10, No. 4 (Nov., 1985), pp. 441-455
