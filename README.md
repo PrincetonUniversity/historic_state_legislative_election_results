@@ -12,6 +12,9 @@ This script and accompanying dataset are provided by the [Princeton Gerrymanderi
 direct any feedback or questions to Brian Remlinger, brem at princeton dot edu. 
 Although we have attempted to check the dataset for errors, accuracy cannot be guaranteed. 
 
+
+This dataset is distributed under a [CC0 license](https://creativecommons.org/publicdomain/zero/1.0/). If you use this data for research or projects, we'd love to know! Please send along an email describing your work.
+
 ## Analysis Details
 ### Input data
 Input data is drawn from Carl Klarner's SLER 1967 - 2010 dataset, as well as its [2011-2012 extension](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/21549). Some precalculation was done on the 2011-2012 extension; see the Excel file in input_data.
