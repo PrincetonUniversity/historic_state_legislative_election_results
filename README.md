@@ -13,7 +13,7 @@ direct any feedback or questions to Brian Remlinger, brem at princeton dot edu.
 Although we have attempted to check the dataset for errors, accuracy cannot be guaranteed. 
 
 
-This dataset is distributed under a [CC0 license](https://creativecommons.org/publicdomain/zero/1.0/). If you use this data for research or projects, we'd love to know! Please send along an email describing your work.
+This dataset is distributed under a [CC0 license](https://creativecommons.org/publicdomain/zero/1.0/), while the generator scripts are distributed under a [GNU GPL license](https://www.gnu.org/licenses/gpl-3.0.en.html). If you use this data for research or projects, we'd love to know! Please send along an email describing your work.
 
 ## Analysis Details
 ### Input data
