@@ -1,12 +1,14 @@
-# State Legislative Elections,  1971 - 2012
+# State Legislative Elections,  1971 - 2016
 
-This repo contains results of general elections to the lower house of the state legislatures over the last fifty years, up to 2012.
+This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2016.
 Candidate information from Carl Klarner's [State Legislative Election Returns dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/20401)
-was used to compile these election results. For each state, we only extract elections using Single Member districts (see below).
+was used to compile these election results from 1971 - 2012. For each state, we only extract elections using Single Member districts (see below).
+
+Elections from 2013 - 2016 were scraped from Ballotpedia on Nov. 3, 2017.
 
 The elections dataset can be found in the output_data folder.
 
-Analysis can be re-run using the script main.py.
+Analysis for elections up to 2012 (inclusive) can be re-run using the script main.py. Analysis for 2013-2016 elections can be re-run with 2013_2016_scraper/run_scraper.py
 
 This script and accompanying dataset are provided by the [Princeton Gerrymandering Project](http://gerrymander.princeton.edu/). Please
 direct any feedback or questions to Brian Remlinger, brem at princeton dot edu. 
@@ -14,11 +16,13 @@ Although we have attempted to check the dataset for errors, accuracy cannot be g
 
 ## Analysis Details
 ### Input data
-Input data is drawn from Carl Klarner's SLER 1967 - 2010 dataset, as well as its [2011-2012 extension](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/21549). Some precalculation was done on the 2011-2012 extension; see the Excel file in input_data.
+Input data for 1971 - 2012 is drawn from Carl Klarner's SLER 1967 - 2010 dataset, as well as its [2011-2012 extension](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/21549). Some precalculation was done on the 2011-2012 extension; see the Excel file in input_data.
+
+Input data from 2013 - 2016 are Ballotpedia's state assembly election results pages. These pages are scraped using BeautifulSoup, then combined into a single file.
 
 ### Output dataset details
 Each row of the output csv file represents an election. The party winning the election is identified as Republican, Democrat,
-Independent, Other, or Both. For details on how parties are designated, see the codebook accompanying the SLER dataset. "Both" 
+Independent, Other, or Both. In 2013-2016 elections, For details on how parties are designated, see the codebook accompanying the SLER dataset. "Both" 
 refers to races won by a candidate nominated by both major parties. For winning candidates nominated by a major party and a minor
 party, only their major party is identified. Party vote totals represent the total number of votes received by each party in 
 an election, even if they were split between several candidates.
@@ -26,6 +30,10 @@ an election, even if they were split between several candidates.
 In some elections, the number of votes cast was not recorded. The vast majority of these elections were uncontested races
 in Florida, Oklahoma, or other states where candidates in unopposed races did not or do not appear on the ballot. In these 
 cases, the winning party is assigned 100 votes and all other vote categories are assigned 0 votes.
+
+"-1" in the incumbency column indicates that incumbency is not known for those elections (applies to elections from 2013 - 2016)
+
+In uncontested races from 2013 - 2016, the uncontested candidate is listed as receiving 1 vote when vote totals are not provided.
 
 ### Data Extraction Details
 
@@ -93,11 +101,11 @@ Arizona
 Idaho
 Maryland
 New Hampshire
-New Jersey
+New Jersey (New Jersey 2013 and 2015 elections are included in this dataset)
 North Dakota
 South Dakota
 Vermont
-Washington
+Washington (Washington 2014 and 2016 elections are included in this dataset)
 West Virginia
 
 ##### Sources:
@@ -107,3 +115,4 @@ West Virginia
 
 [Chapter 8 Multimember Districts](http://www.ncsl.org/Portals/1/Documents/Redistricting/Redistricting_2010.pdf), Redistricting Law 2010, National Conference of State Legislatures
 
+[Ballotpedia](https://ballotpedia.org/Main_Page)
