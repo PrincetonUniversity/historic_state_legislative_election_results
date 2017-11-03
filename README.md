@@ -100,7 +100,6 @@ Wyoming (switched for 1992 election)
 North Carolina (switched for 2002 election)  
 
 ##### States using multimember districts after 2010
-<<<<<<< HEAD
 Arizona
 Idaho
 Maryland
@@ -111,18 +110,6 @@ South Dakota
 Vermont
 Washington (Washington 2014 and 2016 elections are included in this dataset)
 West Virginia
-=======
-Arizona  
-Idaho  
-Maryland  
-New Hampshire  
-New Jersey  
-North Dakota  
-South Dakota  
-Vermont  
-Washington  
-West Virginia  
->>>>>>> 87e4af419790bda1930224552d0e8ac7d636d3e4
 
 ##### Sources:
 [The Impact of Multimember Districts on Party Representation in U. S. State Legislatures](http://www.jstor.org/stable/440068?seq=1#page_scan_tab_contents), Richard G. Niemi, Jeffrey S. Hill and Bernard Grofman, Legislative Studies Quarterly, Vol. 10, No. 4 (Nov., 1985), pp. 441-455
