@@ -45,9 +45,11 @@ Several elections are excluded from the dataset. In particular, Georgia's 2002 e
 multi-member districts, and several elections Massachusetts and Maine in the 1970s are excluded because they preceded a large
 change in the legislature size. Excluded elections can be found in elections_to_exclude.csv in the input_data folder.
 
-#### Data corrections
-In several states in the 2011-2012 dataset extension, some candidates were marked as running under both parties, where
-they in fact ran only on one party's platform. These errors are corrected in SLERs2011_2012_corrections.csv in the input_data folder.
+#### Data modifications 
+In several states in the 2011-2012 dataset extension, some candidates ran as candidates for both parties 
+but operated and identified as members of one party. These candidates
+are re-coded with the appropriate party ID 
+in SLERs2011_2012_recoding.csv in the input_data folder.
 
 #### First election using Single Member Districts, State By State
 ##### States that eliminated Multimember districts before 1960

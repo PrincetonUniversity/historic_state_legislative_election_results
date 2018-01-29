@@ -388,7 +388,7 @@ if __name__ == "__main__":
     header = ["State", "District", "Year", "Party", "Incumbent", "Dem Votes", "GOP Votes", "Other Votes"]
     smd_file = 'input_data/start_from_election_year.csv'
     exclusion_file = 'input_data/elections_to_exclude.csv'
-    corrections_file_2011_2012 = 'input_data/SLERs2011_2012_corrections.csv'
+    corrections_file_2011_2012 = 'input_data/SLERs2011_2012_recoding.csv'
     cutoff_year = 1970
 
     elections_1972_2010 = candidates_to_elections(datafile_1972_2010, savefile_1972_2010, header, smd_file=smd_file, exclusion_file=exclusion_file,has_header=has_header,cutoff_year=cutoff_year)
@@ -437,7 +437,7 @@ if __name__ == "__main__":
 #
 #    elections = create_elections_dict(assembly_data)
 #    if correct_data_trigger:
-#        elections = correct_data(elections, 'SLERs2011_2012_corrections.csv')
+#        elections = correct_data(elections, 'SLERs2011_2012_recoding.csv')
 #
 #    #filter out elections pre-1971 and elections conducted under MMD
 #    single_member_elections = {}

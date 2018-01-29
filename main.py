@@ -63,7 +63,7 @@ if __name__ == '__main__':
     #election conducted under a MMD plan, for example)
     exclusion_file = 'input_data/elections_to_exclude.csv'
     #corrections_file contains corrections to errors identified in the original dataset
-    corrections_file_2011_2012 = 'input_data/SLERs2011_2012_corrections.csv'
+    corrections_file_2011_2012 = 'input_data/SLERs2011_2012_recoding.csv'
     #All elections held before and during cutoff_year are excluded from analysis
     cutoff_year = 1970
 
