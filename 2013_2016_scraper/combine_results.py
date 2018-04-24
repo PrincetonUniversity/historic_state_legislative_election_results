@@ -103,7 +103,7 @@ class Candidate:
         elif lowercase_party.find("republican") != -1:
             return "R"
         else:
-            return "Other"
+            return "I"
 
 
 
@@ -165,7 +165,7 @@ def write_elections(elections_dict, outfile, name_to_abbr_dict):
         #is the sum of all votes those candidates recieved
         d_votes = sum([candidate.votes for candidate in election.candidates if candidate.party == 'D'])
         r_votes = sum([candidate.votes for candidate in election.candidates if candidate.party == 'R'])
-        other_votes = sum([candidate.votes for candidate in election.candidates if candidate.party == 'O'])
+        other_votes = sum([candidate.votes for candidate in election.candidates if candidate.party == 'I'])
 
         rows.append([state, district, year, winning_party, incumbent, d_votes, r_votes, other_votes])
 

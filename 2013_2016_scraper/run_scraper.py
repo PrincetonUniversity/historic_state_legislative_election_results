@@ -16,7 +16,7 @@ if __name__ == '__main__':
     #toggle to re-scrape the results form ballotpedia. If false,
     #intermediate data files (results of web-scraping) are used
     #to create election information file
-    rescrape = True
+    rescrape = False
 
     if rescrape:
         #scripts to run web scrapes for the various years. url_file_xxx contains
