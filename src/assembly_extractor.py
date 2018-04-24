@@ -271,6 +271,11 @@ def correct_data(elections, corrections_file):
         dict_key = year + "|" + state + "|" + name_of_winner
         if dict_key in keys:
             election.winner.party = corrections_dict[dict_key]
+            if election.winner.party == "R":
+                election.rep_votes = election.winner.votes
+            elif election.winner.party == "D":
+                election.dem_votes = election.winner.votes
+            election.other_votes = 0
 
     return elections
 
