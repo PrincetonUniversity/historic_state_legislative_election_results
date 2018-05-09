@@ -13,6 +13,7 @@ if __name__ == '__main__':
     outfile_2015 = 'results_2015/2015_election_results.csv'
     outfile_2016 = 'results_2016/2016_election_results.csv'
     outfile_2016_ny = 'results_2016/2016_election_results_ny.csv'
+    outfile_2017_va = 'results_2017/2017_election_results_va.csv'
 
     #toggle to re-scrape the results form ballotpedia. If false,
     #intermediate data files (results of web-scraping) are used

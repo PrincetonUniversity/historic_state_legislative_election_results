@@ -91,5 +91,5 @@ def read_urls(url_file):
 
 if __name__ == '__main__':
     url_file = '2017_urls_va.csv'
-    outfile = '2017_election_results.csv'
+    outfile = '2017_election_results_va.csv'
     scrape_results(url_file, outfile)
