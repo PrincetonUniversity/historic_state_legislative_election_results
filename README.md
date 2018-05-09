@@ -23,6 +23,8 @@ Input data for 1971 - 2012 is drawn from Carl Klarner's SLER 1967 - 2010 dataset
 
 Input data from 2013 - 2016 are Ballotpedia's state assembly election results pages. These pages are scraped using BeautifulSoup, then combined into a single file.
 
+2017 VA House of Delegates election results are pulled from the Virginia Department of Elections.
+
 ### Output dataset details
 Each row of the output csv file represents an election. The party winning the election is identified as Republican, Democrat,
 Independent, Other, or Both. In 2013-2016 elections, For details on how parties are designated, see the codebook accompanying the SLER dataset. "Both" 
