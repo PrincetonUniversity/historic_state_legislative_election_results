@@ -145,6 +145,8 @@ def write_elections(elections_dict, outfile, name_to_abbr_dict):
     
     #rows to write to the csv file
     rows = []
+    
+    assembly_header = ["State", "District", "Year", "Party", "Incumbent", "Dem Votes", "GOP Votes", "Other Votes"]
 
     keys = elections_dict.keys()
 
@@ -173,9 +175,11 @@ def write_elections(elections_dict, outfile, name_to_abbr_dict):
     rows.sort(key=lambda x: x[1])
     rows.sort(key=lambda x: x[0])
     
+    
+    
     with open(outfile, 'w') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerows(rows)
+        writer.writerows([assembly_header] + rows)
 
     return rows
 

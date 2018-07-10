@@ -1,5 +1,7 @@
 # State Legislative Elections,  1971 - 2016
 
+*includes VA 2017, but not yet NJ 2017*
+
 This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2016.
 Candidate information from Carl Klarner's [State Legislative Election Returns dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/20401)
 was used to compile these election results from 1971 - 2012. For each state, we only extract elections using Single Member districts (see below).
