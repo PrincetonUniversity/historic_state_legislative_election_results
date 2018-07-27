@@ -6,7 +6,7 @@ was used to compile these election results from 1971 - 2012. For each state, we 
 
 The elections dataset can be found in the output_data folder.
 
-Analysis for elections up to 2012 (inclusive) can be re-run using the script main.py. Analysis for 2013-2017 elections can be re-run with 2013_2017_scraper/run_scraper.py
+Analysis for elections up to 2012 (inclusive) can be re-run using the script main.py. Analysis for 2013-2017 elections can be re-run with post2013_scraper/run_scraper.py
 
 This script and accompanying dataset are provided by the [Princeton Gerrymandering Project](http://gerrymander.princeton.edu/). Please
 direct any feedback or questions to Brian Remlinger, brem at princeton dot edu. 

@@ -45,7 +45,7 @@ if __name__ == '__main__':
     dict_file = 'name_to_abbrev.json'
 
     #file where the election info will be saved
-    all_elections_outfile = '2013_2017_state_legislative_elections.csv'
+    all_elections_outfile = 'post2013_state_legislative_elections.csv'
 
     list_of_elections_files = [
                                 outfile_2013_2014, 
