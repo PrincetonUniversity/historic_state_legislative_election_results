@@ -1,16 +1,12 @@
-# State Legislative Elections,  1971 - 2016
+# State Legislative Elections,  1971 - 2017
 
-*includes VA 2017, but not yet NJ 2017*
-
-This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2016.
+This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2017.
 Candidate information from Carl Klarner's [State Legislative Election Returns dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/20401)
 was used to compile these election results from 1971 - 2012. For each state, we only extract elections using Single Member districts (see below).
 
-Elections from 2013 - 2016 were scraped from Ballotpedia on Nov. 3, 2017.
-
 The elections dataset can be found in the output_data folder.
 
-Analysis for elections up to 2012 (inclusive) can be re-run using the script main.py. Analysis for 2013-2016 elections can be re-run with 2013_2016_scraper/run_scraper.py
+Analysis for elections up to 2012 (inclusive) can be re-run using the script main.py. Analysis for 2013-2017 elections can be re-run with 2013_2017_scraper/run_scraper.py
 
 This script and accompanying dataset are provided by the [Princeton Gerrymandering Project](http://gerrymander.princeton.edu/). Please
 direct any feedback or questions to Brian Remlinger, brem at princeton dot edu. 
@@ -25,11 +21,12 @@ Input data for 1971 - 2012 is drawn from Carl Klarner's SLER 1967 - 2010 dataset
 
 Input data from 2013 - 2016 are Ballotpedia's state assembly election results pages. These pages are scraped using BeautifulSoup, then combined into a single file.
 
+2016 NJ Assembly results are pulled from Ballotpedia. Because the districts are multimember, candidates from each party have been summed together.
 2017 VA House of Delegates election results are pulled from the Virginia Department of Elections.
 
 ### Output dataset details
-Each row of the output csv file represents an election. The party winning the election is identified as Republican, Democrat,
-Independent, Other, or Both. In 2013-2016 elections, For details on how parties are designated, see the codebook accompanying the SLER dataset. "Both" 
+Each row of the output csv file represents an election. n 2013-2017 elections, the party winning the election is identified as Republican, Democrat,
+Independent, Other, or Both. For details on how parties are designated in previous elections, see the codebook accompanying the SLER dataset. "Both" 
 refers to races won by a candidate nominated by both major parties. For winning candidates nominated by a major party and a minor
 party, only their major party is identified. Party vote totals represent the total number of votes received by each party in 
 an election, even if they were split between several candidates.
@@ -38,7 +35,7 @@ In some elections, the number of votes cast was not recorded. The vast majority 
 in Florida, Oklahoma, or other states where candidates in unopposed races did not or do not appear on the ballot. In these 
 cases, the winning party is assigned 100 votes and all other vote categories are assigned 0 votes.
 
-"-1" in the incumbency column indicates that incumbency is not known for those elections (applies to elections from 2013 - 2016)
+"-1" in the incumbency column indicates that incumbency is not coded for those elections
 
 In uncontested races from 2013 - 2016, the uncontested candidate is listed as receiving 1 vote when vote totals are not provided.
 
@@ -112,7 +109,7 @@ Arizona
 Idaho   
 Maryland    
 New Hampshire  
-New Jersey (New Jersey 2013 and 2015 elections are included in this dataset)  
+New Jersey (New Jersey 2013, 2015, 2017 elections are included in this dataset)  
 North Dakota  
 South Dakota  
 Vermont  

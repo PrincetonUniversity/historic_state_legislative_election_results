@@ -119,9 +119,7 @@ def pull_races(soup):
 def extract_race_results(url):
     #fetch and parse the page
     page_text = fetch_page(url)
-    print 'fetched text'
     soup = BeautifulSoup(page_text, 'lxml')
-    print 'made soup'
     race_results = pull_races(soup)
     return race_results
 
@@ -147,7 +145,7 @@ def scrape_results(url_file, outfile):
     urls = read_urls(url_file)
     all_results = []
     for year, state, url in urls:
-        print state
+        print(state)
         time.sleep(1)
         race_results = extract_race_results(url)
         all_results.append((year, state, race_results))
