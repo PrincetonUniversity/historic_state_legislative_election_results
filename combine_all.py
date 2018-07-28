@@ -10,14 +10,25 @@ dfs = [pd.read_csv(f, dtype='object') for f in files]
 
 all = pd.concat(dfs)
 
+
 def clean_district_text(x):
     if isinstance(x, str) and re.match('^District ', x):
-        return x.replace('District ', '')
+        return x.replace('District ', '').strip()
     else:
-        return x
+        return x.strip()
         
+def district_no_for_sorting(x):
+    x = re.sub('\D', '', x)
+    if x=='':
+        return 0
+    else:
+        return int(x)
+
 all['District'] = all['District'].apply(clean_district_text)
 
-all = all.sort_values(['State', 'Year', 'District']) # should also try natsorting the districts
+sortname = 'District_for_sorting'
+all[sortname] = all['District'].apply(district_no_for_sorting)
+all = all.sort_values(['Year', 'State', sortname])
 
-all.to_csv('state_legislative_election_results_post1971.csv', index=False)
+all[[c for c in all.columns if c != sortname]].to_csv('state_legislative_election_results_post1971.csv', index=False)
+
