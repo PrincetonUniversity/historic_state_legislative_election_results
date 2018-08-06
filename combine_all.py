@@ -1,6 +1,5 @@
 import pandas as pd
 import re
-import natsort as ns
 
 files = ['output_data/assembly_cleaned_data_1972_2010.csv',
          'output_data/assembly_cleaned_data_2011_2012.csv',
@@ -29,6 +28,10 @@ all['District'] = all['District'].apply(clean_district_text)
 sortname = 'District_for_sorting'
 all[sortname] = all['District'].apply(district_no_for_sorting)
 all = all.sort_values(['Year', 'State', sortname])
+
+all['Dem Votes'] = all['Dem Votes'].apply(float).apply(int)
+all['GOP Votes'] = all['GOP Votes'].apply(float).apply(int)
+all['D Voteshare'] = all['Dem Votes'] / (all['Dem Votes'] + all['GOP Votes'])
 
 all[[c for c in all.columns if c != sortname]].to_csv('state_legislative_election_results_post1971.csv', index=False)
 
