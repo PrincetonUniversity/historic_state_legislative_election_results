@@ -32,6 +32,7 @@ class Election:
 
         self.candidates = []
         self.winner = None
+        self.incumbency = None
 
         self.id_string = self.state + "|" + self.year + "|" + self.district 
 
@@ -107,6 +108,14 @@ class Election:
                 self.dem_votes = '0'
                 self.rep_votes = '0'
                 self.other_votes = '100'
+                
+        # find which candidates, if any, were incumbents. If none were, mark that the seat was open.
+        incumbent = [i.party for i in self.candidates if i.incumbency=='1']
+        if len(incumbent)==1:
+            self.incumbency = incumbent[0]
+        else:
+            self.incumbency = 'O'
+                
         return None
 
 
@@ -224,7 +233,7 @@ def election_writer(elections, outfile, header = None):
         if e.district == '':
             e.district = -1
         line = [e.state, e.district, e.year,e.winner.party,
-                e.winner.incumbency, e.dem_votes, e.rep_votes, e.other_votes]
+                e.incumbency, e.dem_votes, e.rep_votes, e.other_votes]
         csv_out.append(line)
 
     csv_out.sort(key=lambda x: (x[0],x[2]))
@@ -315,7 +324,7 @@ def candidates_to_elections(datafile, savefile, header, smd_file=None, exclusion
     year are dropped
     '''
 
-    with open(datafile) as csvfile:
+    with open(datafile, encoding='gbk') as csvfile:
         csv_reader = csv.reader(csvfile)
         assembly_data = [line for line in csv_reader]
 
