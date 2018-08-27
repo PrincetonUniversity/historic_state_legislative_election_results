@@ -187,7 +187,6 @@ def write_elections(elections_dict, outfile, name_to_abbr_dict):
 def dict_merge(dict1, dict2):
     #merge two election dictionaries. There should
     #be no overlap in the keys
-    dict1_keys = dict1.keys()
     for key in dict1:
         assert key not in dict2,'there should be no overlap in keys'
         dict2[key] = dict1[key]
