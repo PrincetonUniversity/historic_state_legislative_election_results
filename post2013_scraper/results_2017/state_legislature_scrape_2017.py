@@ -68,8 +68,7 @@ def extract_race_results(url, state):
         
         N = 40
         districts = page_content.find_all('table', {'width': '500px'})[:N]
-        district = districts[0]
-        # df = pd.DataFrame()
+
         for district in districts:
             election = Election()
             dnumber = district.find_all('th')[0].contents[0].contents[0]
