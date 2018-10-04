@@ -1,8 +1,9 @@
-from bs4 import BeautifulSoup
+import pandas as pd
 import requests
 import re
 import csv
-import time
+from bs4 import BeautifulSoup as bs
+
 
 class Candidate:
     #represents one row in the output file
@@ -16,20 +17,6 @@ class Candidate:
         self.votes = votes.encode('utf8')
         self.winner = winner
 
-        #in some uncontested races, vote totals are not reported. In those cases,
-        #the winning candidate is marked as receiving 1 vote
-        if self.name.find(self.votes) != -1:
-            self.votes = 1
-
-        #in cases where a party does not have a candidate, the input name
-        #is 'no candidate'. Those "candidates" obviously earn no votes
-        elif self.votes.find('No candidate') != -1:
-            self.votes = 0
-
-        #otherwise, assume the votes are real, and strip and spaces, letters,
-        #commas, and other non-numberic values
-        else:
-            self.votes = re.sub("[^0-9]","",self.votes)
 
 
 
@@ -54,9 +41,8 @@ def pull_races(soup):
     all_race_divs = soup.find_all(id=re.compile('District_*'))
 
     election_list = []
-
+    
     for idx,race in enumerate(all_race_divs):
-
         election = Election()
         #the first district on each page is different than all the others for formatting reasons
         if idx == 0:
@@ -101,16 +87,24 @@ def pull_races(soup):
        
         #the candidate info are all the leaves of the tag, but not all the leaves are candidates
         general_election_candidates = [candidate_tag for candidate_tag in results_tag.children if candidate_tag != u'\n']
-
         for candidate in general_election_candidates:
             #don't mistake that General Election leaf for a candidate
             if candidate.text.find('General election') == -1:
-                candidate_text = candidate.text
+                if ':' in candidate.text: # if there is a colon
+                    candidate_name, candidate_votes = candidate.text.split(':')
+                elif re.search('\d', candidate.text): # if there's no colon but there's a vote count
+                    split_pt = re.search('\d', candidate.text).start()
+                    candidate_name = candidate.text[:split_pt]
+                    candidate_votes = candidate.text[split_pt:]
+                else: # if there's no vote count
+                    candidate_name = candidate.text
+                    candidate_votes = '1'
+                    
+                candidate_name = candidate_name.strip()
+                if candidate_name == 'No candidate':
+                    candidate_votes = '0'
+                candidate_votes = ''.join(i for i in candidate_votes if i.isdigit())
 
-                #this is particular to how the text is formatted
-                candidate_name = candidate.text[:candidate_text.find(':')]
-                candidate_votes = candidate.text[candidate_text.find(':')+1:]
-                candidate_votes = candidate_votes.replace(',',"")
                 try:
                     candidate_party = candidate.a['title']
                 except:
@@ -131,11 +125,31 @@ def pull_races(soup):
     return election_list
 
 
-def extract_race_results(url):
-    page_text = fetch_page(url)
-    soup = BeautifulSoup(page_text, 'lxml')
-    race_results = pull_races(soup)
-    return race_results
+def pull_incumbency(soup):
+    # find all instances of the word incumbent, and cycle back to find the name that it refers to, making a list of incumbent names.
+    matches = soup(text=re.compile('Incumbent '))
+    
+    incumbents = []
+    
+    def get_name(tag):
+        text = ''
+        while len(text) < 2:
+            if hasattr(tag, 'previous_sibling'):
+                tag = tag.previous_sibling
+            else:
+                return None
+            if hasattr(tag, 'text'):
+                text = tag.text
+                
+        return text
+
+    for match in matches:
+        name = get_name(match)
+
+        if (name is not None) and (name != 'Note:'):
+            incumbents.append(name)                
+            
+    return incumbents
 
 
 def read_urls(url_file):
@@ -168,16 +182,36 @@ def scrape_results(url_file, outfile):
     #wrapper to run the whole fetching/scraping/results writing pipeline
     urls = read_urls(url_file)
     all_results = []
-    for year,state, url in urls:
-        #just putting a timer in to be considerate of the site resources
-        time.sleep(1)
+    incumbency = pd.DataFrame()
+    
+    for year, state, url in urls:
         print(year, state)
-        race_results = extract_race_results(url)
+        
+        page_text = fetch_page(url)
+        soup = bs(page_text, 'lxml')
+        race_results = pull_races(soup)
+        
         all_results.append((year, state, race_results))
+        
+        incumbents = pull_incumbency(soup)
+        for incumbent in incumbents:
+            incumbency = incumbency.append({'Year': year,
+                                            'State': state,
+                                            'Name': incumbent,
+                                            'Incumbent': True},
+                                           ignore_index=True)
+        
     write_results(all_results, outfile)
+    
+    df = pd.read_csv(outfile, header=None, names=['Year', 'State', 'District', 'Party', 'Name', 'Votes', 'Winner'], dtype=str)
+    merged = df.merge(incumbency, on=['Year', 'State', 'Name'], how='left')    
+    merged['Incumbent'] = merged['Incumbent'].fillna(0)
+    merged.to_csv(outfile, index=False)
+    
     return all_results
 
+    
 if __name__ == '__main__':
-    url_file = '2013_2014_urls.csv'
+    url_file = '/Users/wtadler/Repos/historic_state_legislative_election_results/post2013_scraper/results_2013_2014/2013_2014_urls.csv'
     outfile = 'election_results_2013_2014.csv'
     all_results = scrape_results(url_file, outfile)
