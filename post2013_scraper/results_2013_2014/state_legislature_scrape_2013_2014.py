@@ -212,6 +212,6 @@ def scrape_results(url_file, outfile):
 
     
 if __name__ == '__main__':
-    url_file = '/Users/wtadler/Repos/historic_state_legislative_election_results/post2013_scraper/results_2013_2014/2013_2014_urls.csv'
+    url_file = '2013_2014_urls.csv'
     outfile = 'election_results_2013_2014.csv'
     all_results = scrape_results(url_file, outfile)

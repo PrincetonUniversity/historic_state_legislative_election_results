@@ -1,8 +1,8 @@
-from bs4 import BeautifulSoup
+import pandas as pd
 import requests
 import re
 import csv
-import time
+from bs4 import BeautifulSoup as bs
 
 class Candidate:
 
@@ -92,7 +92,7 @@ def pull_races(soup):
             #if you find a candidate, chop the text into different bits and create a Candidate object
             if candidate.text.find('General election') == -1 and candidate.text.find('Note:') == -1:
                 candidate_text = candidate.text
-                candidate_name = candidate.text[1:candidate_text.find(':')]
+                candidate_name = candidate.text[1:candidate_text.find(':')].strip()
                 candidate_votes = candidate.text[candidate_text.find(':')+2:]
                 candidate_votes = candidate_votes.replace(',',"")
 
@@ -116,13 +116,6 @@ def pull_races(soup):
     return election_list
 
 
-def extract_race_results(url):
-    #fetch and parse the page
-    page_text = fetch_page(url)
-    soup = BeautifulSoup(page_text, 'lxml')
-    race_results = pull_races(soup)
-    return race_results
-
 def read_urls(url_file):
     #parse the URL file
     with open(url_file) as csvfile:
@@ -140,19 +133,71 @@ def write_results(race_results, outfile):
                     csvwriter.writerow([year, state,candidate.district, candidate.party, candidate.name, candidate.votes, candidate.winner])
     return None
 
+def pull_incumbency(soup):
+    # find all instances of the word incumbent, and cycle back to find the name that it refers to, making a list of incumbent names.
+    matches = soup(text=re.compile('Incumbent '))
+    
+    incumbents = []
+    
+    def get_name(tag):
+        text = ''
+        while len(text) < 2:
+            if hasattr(tag, 'previous_sibling'):
+                tag = tag.previous_sibling
+            else:
+                return None
+            if hasattr(tag, 'text'):
+                text = tag.text
+                
+        return text
+
+    matches[:5]
+    get_name(matches[2])
+    
+    for match in matches:
+        name = get_name(match)
+
+        if (name is not None) and (name != 'Note:'):
+            incumbents.append(name)                
+            
+    return incumbents
+
+
 def scrape_results(url_file, outfile):
     #wrapper for fetching html/parsing it/writing results to file
     urls = read_urls(url_file)
     all_results = []
+    incumbency = pd.DataFrame()
+    
     for year, state, url in urls:
         print(state)
-        time.sleep(1)
-        race_results = extract_race_results(url)
+        
+        page_text = fetch_page(url)
+        soup = bs(page_text, 'lxml')
+        race_results = pull_races(soup)
+        
         all_results.append((year, state, race_results))
+        
+        incumbents = pull_incumbency(soup)
+        
+        for incumbent in incumbents:
+            incumbency = incumbency.append({'Year': year,
+                                            'State': state,
+                                            'Name': incumbent,
+                                            'Incumbent': True},
+                                           ignore_index=True)
+
     write_results(all_results, outfile)
+    
+    df = pd.read_csv(outfile, header=None, names=['Year', 'State', 'District', 'Party', 'Name', 'Votes', 'Winner'], dtype=str)
+    merged = df.merge(incumbency, on=['Year', 'State', 'Name'], how='left')
+    merged['Incumbent'] = merged['Incumbent'].fillna(0)
+
+    merged.to_csv(outfile, index=False)
+    
     return all_results
 
 if __name__ == '__main__':
-    url_file = '2015_urls.csv'
-    out_file = '2015_election_results.csv'
+    url_file = '/Users/wtadler/Repos/historic_state_legislative_election_results/post2013_scraper/results_2015/2015_urls.csv'
+    outfile = '2015_election_results.csv'
     scrape_results(url_file, outfile)
