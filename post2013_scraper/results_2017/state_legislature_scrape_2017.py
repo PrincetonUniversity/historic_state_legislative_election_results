@@ -82,17 +82,17 @@ def extract_va(url):
     soup = bs(page_text, 'lxml')
     general = soup.find('span', {'id': 'General_election_candidates'})
     t = general.find_next('table')
-    
+
     df = pd.read_html(str(t))[0][1:]
 
     df.columns = [i.replace('"', '').strip() for i in df.iloc[0]]
     df = df.drop(1)
     df = df.set_index(['District'])
         
-    df['State'] = 'Virginia'
+    df['State'] = state
     df['Year'] = '2017'
     df.columns.name = None
-    
+
     def keep_row(x):
         # keep row if it's not nan, not a weird character, and not Notes
         if x==x and not re.match('^\xc2', x) and not re.match('^Notes', x):
@@ -107,10 +107,12 @@ def extract_va(url):
         x = x.split(':')[0] # use everything before the colon
         return x
         
-    for party in ['Democrat', 'Republican']:
-        df[party + ' Incumbent'] = df[party].apply(lambda x: x.find('I') != -1)
-        df[party + ' Votes'] = df[party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
-        df[party] = df[party].apply(clean_name)
+    for party in ['Democrat', 'Republican', 'Other']:
+        index = ~df[party].isna()
+        df.loc[index, party + ' Incumbent'] = df.loc[index, party].apply(lambda x: x.find('(I)') != -1)
+        df.loc[index, party + ' Votes'] = df.loc[index, party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
+        df.loc[index, party] = df.loc[index, party].apply(clean_name)
+
     
     # take care of vote totals when there is no candidate    
     no_rep = df['Republican'].apply(lambda x: x.startswith('No candidate'))
@@ -122,6 +124,11 @@ def extract_va(url):
     
     df.loc[no_rep & (df['Democrat Votes']==''), 'Democrat Votes'] = 1
     df.loc[no_dem & (df['Republican Votes']==''), 'Republican Votes'] = 1
+    
+    
+    df['Other'] = df['Other'].fillna('No candidate')
+    df[['Other Incumbent', 'Other Votes']] = df[['Other Incumbent', 'Other Votes']].fillna(0)
+    
     
     return df
 
@@ -146,6 +153,7 @@ def scrape_results():
     write_results(all_results, 'nj2017.csv')
     
     va = extract_va('https://ballotpedia.org/Virginia_House_of_Delegates_elections,_2017')
+    va.to_csv('va2017.csv')
     
 
 
