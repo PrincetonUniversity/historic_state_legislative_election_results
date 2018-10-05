@@ -1,109 +1,12 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as bs
 import requests
 import re
 import csv
-import time
-
-class Candidate:
-    #represents one row of the output file
-
-    def __init__(self, district, name, party, votes, winner):
-        #all arguments are strings, except winner, which is a Bool
-        #strings get converted to utf8 to avoid unicode issues
-        self.district = district.encode('utf8')
-        self.name = name.encode('utf8')
-        self.party = party.encode('utf8')
-        self.votes = votes.encode('utf8')
-        self.winner = winner
-
-        #if the votes string has "No" in it, that means the 'candidate'
-        #was actually "No Candidate" and the party didn't run anyone
-        #in that election. They get 0 votes
-        if self.votes.find('No') != -1:
-            self.votes = '0' 
-
-        #in unopoosed races, sometimes the candidate's name will 
-        #end up duplicated as the "vote" string. 
-        if self.name.find(self.votes) != -1:
-            self.votes = '1'
-
-        #otherwise, strip all non-numberic characters from
-        #the votes string
-        else:
-            self.votes = re.sub("[^0-9]","",self.votes)
-
-
-class Election:
-    #holder object for Candidate objects
-
-    def __init__(self):
-        self.candidates = []
-
-    def add_candidate(self,new_candidate):
-        self.candidates.append(new_candidate)
-
+import pandas as pd
 
 def fetch_page(url):
     page = requests.get(url)
     return page.text
-
-
-def pull_races(soup):
-    #pulls the election results from the BeautifulSoup html tree and returns a list of Elections objects
-    #the parsing tree is a disaster, but I'll try to explain
-    
-    #find the General election tag, then navigate away from that and get all the table entries
-    general_election = soup.find_all(id='General_election')
-    general_election_table = [x for x in general_election[0].parent.next_sibling.next_sibling.children if x != '\n']
-
-    election_list = []
-
-    #ignore the first and last entries, they're not election results
-    for row in general_election_table[2:-1]:
-        #ignore rows with certain formattings
-        if row.text[3:] != u'\n\n\n\n' and row.text[2:6] != u'Note':
-            children = [x for x in row.children if x != '\n']
-            district = children[0].text
-            general_election_candidates = children[1:]
-            election = Election()
-
-            for idx, candidate in enumerate(general_election_candidates):
-                if candidate.text != u'\n':
-                    #this chops the candidate info into the appropriate strings, then creates a Candidate object
-                    candidate_text = candidate.text
-                    candidate_name = candidate.text[:candidate_text.find(':')]
-                    candidate_votes = candidate_text[candidate_text.find(':')+1:candidate_text.find(' ',candidate_text.find(":")+2)]
-                    candidate_votes = candidate_votes.replace(',',"")
-
-                    #because of the table structure, the first element contains Dems,
-                    #the second contains Reps, and the third contains other/third-party
-                    if idx == 0:
-                        candidate_party = "Democratic"
-                    elif idx == 1:
-                        candidate_party = "Republican"
-                    else:
-                        candidate_party = "Other"
-
-                    #candidates who win have a green check with title='Approved'
-                    if candidate.find_all(title='Approved') != []:
-                        candidate_won = True
-                    else:
-                        candidate_won = False
-
-                    c = Candidate(district,candidate_name, candidate_party, candidate_votes, candidate_won)
-                    election.add_candidate(c)
-            election_list.append(election)
-
-    return election_list
-
-
-def extract_race_results(url):
-    #fetch the html text, convert it into soup, and pull the race details
-    page_text = fetch_page(url)
-    soup = BeautifulSoup(page_text, 'lxml')
-    race_results = pull_races(soup)
-    return race_results
-
 
 def read_urls(url_file):
     #parse the URL file
@@ -112,40 +15,74 @@ def read_urls(url_file):
         urls = [(url[0],url[1],url[2]) for url in reader]
     return urls
 
-
-def write_results(race_results, outfile):
-    #given a list of tuples of the form (year, state, [list of election objects]),
-    #write everything to file
-    with open(outfile,'w') as csvout:
-        csvwriter = csv.writer(csvout)
-        for year, state, results in race_results:
-            for election in results:
-                for candidate in election.candidates:
-                    #carve out for weird kansas formatting thing
-                    if candidate.name == ' *Jim Gartner was appointed to replace retiring incumbent Annie Tietze. As a result, he appeared on the ballot as an incumbent, although he had not yet served a full term.':
-                        pass
-                    #carve out for Dem candidate in MN-32B, where a general election wasn't held in 2016
-                    elif candidate.name == ' Laurie Warner' and candidate.party == 'Democratic':
-                        pass
-                    #carve out for Rep candidate inMN-32B, where a general election wasn't held in 2016
-                    elif candidate.name == ' Bob Barrett (I)' and candidate.party == 'Republican':
-                        pass
-
-                    else:
-                        csvwriter.writerow([year, state,candidate.district, candidate.party, candidate.name, candidate.votes, candidate.winner])
-    return None
-
 def scrape_results(url_file, outfile):
-    #wrapper to run all of the fetching/parsing/writing results code
     urls = read_urls(url_file)
-    all_results = []
+    all_results = pd.DataFrame()
+    url = 'https://ballotpedia.org/Alaska_House_of_Representatives_elections,_2016'
+            
+    def keep_row(x):
+        # keep row if it's not nan, not a weird character, and not Notes
+        if x==x and not re.match('^\xc2', x) and not re.match('^Notes', x):
+            return True
+        else:
+            return False
+
+    
     for year, state, url in urls:
-        time.sleep(1)
         print(year, state)
-        race_results = extract_race_results(url)
-        all_results.append((year,state,race_results))
-    write_results(all_results, outfile)
-    return all_results
+        page_text = fetch_page(url)
+        soup = bs(page_text, 'lxml')
+        
+        general = soup.find('span', {'id': 'General_election'})
+        t = general.find_next('table')
+        
+        # t = soup.find_all('table', {'class': 'bptable', 'style': 'align: center; border: 0px; background: white; text-align: center; box-shadow: 0px 2px 5px #A0A0A0; width: 100%;'})[0]
+
+        df = pd.read_html(str(t))[0][1:]
+        df.columns = df.iloc[0]
+        df = df.drop(1)
+        df = df.set_index(['District'])
+        
+        df['State'] = state
+        df['Year'] = year
+        df.columns.name=None
+        
+        df = df.loc[[keep_row(i) for i in df.index]]
+                
+        all_results = pd.concat([all_results, df], ignore_index=True)
+        
+    orig = all_results.copy()
+    orig.head()
+    all_results = orig.copy()
+        
+    def clean_name(x):
+        x = x.replace(' (I)', '') # strip out incumbency indicator
+        x = x.split(':')[0] # use everything before the colon
+        return x
+        
+    for party in ['Democrat', 'Republican']:
+        all_results[party + ' Incumbent'] = all_results[party].apply(lambda x: x.find('I') != -1)
+        all_results[party + ' Votes'] = all_results[party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
+        all_results[party] = all_results[party].apply(clean_name)
+    
+    all_results.head()
+    
+    # take care of vote totals when there is no candidate    
+    no_rep = all_results['Republican'].apply(lambda x: x.startswith('No candidate'))
+    no_dem = all_results['Democrat'].apply(lambda x: x.startswith('No candidate'))
+    
+    all_results.loc[no_dem, 'Democrat Votes'] = 0
+    all_results.loc[no_rep, 'Republican Votes'] = 0
+    
+    
+    all_results.loc[no_rep & (all_results['Democrat Votes']==''), 'Democrat Votes'] = 1
+    all_results.loc[no_dem & (all_results['Republican Votes']==''), 'Republican Votes'] = 1
+    
+    
+    # parse out votes and incumbency.
+        
+    all_results.to_csv('all_states.csv', encoding='utf-8')
+    
 
 if __name__ == '__main__':
     url_file = '2016_urls.csv'

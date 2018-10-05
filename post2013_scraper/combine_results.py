@@ -197,7 +197,7 @@ def state_name_to_abbr(state_name, name_to_abbr_dict):
     return name_to_abbr_dict[state_name]
             
 
-def combine_results(list_of_elections_files,dict_file,out_file):
+def combine_results(list_of_elections_files, dict_file, out_file):
     #given a list of files containing candidate information
     #and a state name -> abbreviation dictionary,
     #read each file, create a dictionary of election objects,

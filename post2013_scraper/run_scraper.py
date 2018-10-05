@@ -38,8 +38,8 @@ if __name__ == '__main__':
         url_file_2016_ny = 'results_2016/2016_urls_ny.csv'
         race_results_2016_ny = sr16_ny(url_file_2016_ny, outfile_2016_ny)
 
-    url_file_2017 = 'results_2017/2017_urls.csv'
-    race_results_2017 = sr17(url_file_2017, outfile_2017)
+        url_file_2017 = 'results_2017/2017_urls.csv'
+        race_results_2017 = sr17(url_file_2017, outfile_2017)
 
     #state name -> abbreviation dictionary file
     dict_file = 'name_to_abbrev.json'
