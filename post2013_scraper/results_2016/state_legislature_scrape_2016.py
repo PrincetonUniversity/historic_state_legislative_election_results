@@ -18,7 +18,6 @@ def read_urls(url_file):
 def scrape_results(url_file, outfile):
     urls = read_urls(url_file)
     all_results = pd.DataFrame()
-    url = 'https://ballotpedia.org/Alaska_House_of_Representatives_elections,_2016'
             
     def keep_row(x):
         # keep row if it's not nan, not a weird character, and not Notes
@@ -56,10 +55,11 @@ def scrape_results(url_file, outfile):
         x = x.split(':')[0] # use everything before the colon
         return x
         
-    for party in ['Democrat', 'Republican']:
-        all_results[party + ' Incumbent'] = all_results[party].apply(lambda x: x.find('I') != -1)
-        all_results[party + ' Votes'] = all_results[party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
-        all_results[party] = all_results[party].apply(clean_name)
+    for party in ['Democrat', 'Republican', 'Other']:
+        index = ~all_results[party].isna()
+        all_results.loc[index, party + ' Incumbent'] = all_results.loc[index, party].apply(lambda x: x.find('(I)') != -1)
+        all_results.loc[index, party + ' Votes'] = all_results.loc[index, party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
+        all_results.loc[index, party] = all_results.loc[index, party].apply(clean_name)
         
     # take care of vote totals when there is no candidate    
     no_rep = all_results['Republican'].apply(lambda x: x.startswith('No candidate'))
@@ -68,14 +68,13 @@ def scrape_results(url_file, outfile):
     all_results.loc[no_dem, 'Democrat Votes'] = 0
     all_results.loc[no_rep, 'Republican Votes'] = 0
     
-    
     all_results.loc[no_rep & (all_results['Democrat Votes']==''), 'Democrat Votes'] = 1
     all_results.loc[no_dem & (all_results['Republican Votes']==''), 'Republican Votes'] = 1
     
-    
-    # parse out votes and incumbency.
+    all_results['Other'] = all_results['Other'].fillna('No candidate')
+    all_results[['Other Incumbent', 'Other Votes']] = all_results[['Other Incumbent', 'Other Votes']].fillna(0)
         
-    all_results.to_csv('all_states.csv', encoding='utf-8')
+    all_results.to_csv(outfile, encoding='utf-8')
     
 
 if __name__ == '__main__':
