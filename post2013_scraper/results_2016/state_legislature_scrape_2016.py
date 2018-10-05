@@ -51,10 +51,6 @@ def scrape_results(url_file, outfile):
                 
         all_results = pd.concat([all_results, df], ignore_index=True)
         
-    orig = all_results.copy()
-    orig.head()
-    all_results = orig.copy()
-        
     def clean_name(x):
         x = x.replace(' (I)', '') # strip out incumbency indicator
         x = x.split(':')[0] # use everything before the colon
@@ -64,9 +60,7 @@ def scrape_results(url_file, outfile):
         all_results[party + ' Incumbent'] = all_results[party].apply(lambda x: x.find('I') != -1)
         all_results[party + ' Votes'] = all_results[party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
         all_results[party] = all_results[party].apply(clean_name)
-    
-    all_results.head()
-    
+        
     # take care of vote totals when there is no candidate    
     no_rep = all_results['Republican'].apply(lambda x: x.startswith('No candidate'))
     no_dem = all_results['Democrat'].apply(lambda x: x.startswith('No candidate'))

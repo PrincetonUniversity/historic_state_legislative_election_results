@@ -10,12 +10,13 @@ import csv
 
 class Candidate:
 
-    def __init__(self, district, name, party, votes, winner):
+    def __init__(self, district, name, party, votes, winner, incumbent):
         self.district = district
         self.name = name
         self.party = party
         self.votes = votes
         self.winner = winner
+        self.incumbent = incumbent
 
 class Election:
     #holder for Candidate objects
@@ -33,71 +34,97 @@ def party(x):
         return (x + ' Party')
 
 
-def extract_race_results(url, state):
+def extract_nj(url, state):
+    state = 'New Jersey'
     election_list = []
-    
-    if state=='Virginia':
-        df = pd.read_json(url)
-
-        for _, race in df.iterrows():
-            election = Election()
-
-            races = race['Races']
-            raceno = re.search('\((.*)\)', # capture characters within parentheses
-                               races['RaceName']).group(1).lstrip('0')
-
-            votes = [cand['Votes'] for cand in races['Candidates']]
-            winner = np.argmax(votes)
-
-            for i, cand in enumerate(races['Candidates']):
-                if i != winner:
-                    cand['Winner'] = False
-                else:
-                    cand['Winner'] = True
-
-            for cand in races['Candidates']:
-                cand = Candidate('District ' + raceno, cand['BallotName'], party(cand['PoliticalParty']), str(cand['Votes']), cand['Winner'])
-                cand
-                election.add_candidate(cand)
-
-            election_list.append(election)
-            
-    elif state=='New Jersey':
-        page_response = requests.get('https://ballotpedia.org/New_Jersey_General_Assembly_elections,_2017', timeout=5)
-        page_content = bs(page_response.content, 'html.parser')
-        
-        N = 40
-        districts = page_content.find_all('table', {'width': '500px'})[:N]
-
-        for district in districts:
-            election = Election()
-            dnumber = district.find_all('th')[0].contents[0].contents[0]
-            dnumber = re.search('District ([0-9]*)', dnumber).group(1)
-            rows = district.find_all('tr')
-
-            for r in rows[2:-2]: # loop over candidates
-                if r.find('a', {'title': 'Won'}):
-                    winner = True
-                else:
-                    winner = False
-                                        
-                for possible_name in r.find_all('a'):
-                    if possible_name.text == possible_name.get('title'):
-                        name = possible_name.text
-                        break
-
-                partyname = r.find('td', {'width': '75px'}).contents[0].rstrip()
-                vote = int(r.find_all('td')[-1].contents[0].replace(',', ''))
-                # df = df.append({'District': dnumber, 'Party': party, 'Vote': vote}, ignore_index=True)
-                cand = Candidate('District ' + dnumber, name, partyname, str(vote), winner)
                 
-                election.add_candidate(cand)
-            election_list.append(election)
-        # df = df.pivot_table(values='Vote', index='District', columns='Party', aggfunc='sum', fill_value=0)
-        # df['2pvs'] = df['Democratic'] / (df['Democratic'] + df['Republican'])
-        # chamber['df'] = df
+    page_response = requests.get(url, timeout=5)
+    page_content = bs(page_response.content, 'html.parser')
+    
+    N = 40
+    districts = page_content.find_all('table', {'width': '500px'})[:N]
+    
+    for district in districts:
+        election = Election()
+        dnumber = district.find_all('th')[0].contents[0].contents[0]
+        dnumber = re.search('District ([0-9]*)', dnumber).group(1)
+        rows = district.find_all('tr')
+        
+        for r in rows[2:-2]: # loop over candidates
+            if r.find('a', {'title': 'Won'}):
+                winner = True
+            else:
+                winner = False
+                
+            if r.find(text='Incumbent'):
+                incumbent = True
+            else:
+                incumbent = False
+                                    
+            for possible_name in r.find_all('a'):
+                if possible_name.text == possible_name.get('title'):
+                    name = possible_name.text
+                    break
+
+            partyname = r.find('td', {'width': '75px'}).contents[0].rstrip()
+            vote = int(r.find_all('td')[-1].contents[0].replace(',', ''))
+            # df = df.append({'District': dnumber, 'Party': party, 'Vote': vote}, ignore_index=True)
+            cand = Candidate('District ' + dnumber, name, partyname, str(vote), winner, incumbent)
+            
+            election.add_candidate(cand)
+        election_list.append(election)
 
     return election_list
+
+def extract_va(url):
+    state = 'Virginia'
+    page_text = requests.get(url).text
+    soup = bs(page_text, 'lxml')
+    general = soup.find('span', {'id': 'General_election_candidates'})
+    t = general.find_next('table')
+    
+    df = pd.read_html(str(t))[0][1:]
+
+    df.columns = [i.replace('"', '').strip() for i in df.iloc[0]]
+    df = df.drop(1)
+    df = df.set_index(['District'])
+        
+    df['State'] = 'Virginia'
+    df['Year'] = '2017'
+    df.columns.name = None
+    
+    def keep_row(x):
+        # keep row if it's not nan, not a weird character, and not Notes
+        if x==x and not re.match('^\xc2', x) and not re.match('^Notes', x):
+            return True
+        else:
+            return False
+
+    df = df.loc[[keep_row(i) for i in df.index]]
+            
+    def clean_name(x):
+        x = x.replace(' (I)', '') # strip out incumbency indicator
+        x = x.split(':')[0] # use everything before the colon
+        return x
+        
+    for party in ['Democrat', 'Republican']:
+        df[party + ' Incumbent'] = df[party].apply(lambda x: x.find('I') != -1)
+        df[party + ' Votes'] = df[party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
+        df[party] = df[party].apply(clean_name)
+    
+    # take care of vote totals when there is no candidate    
+    no_rep = df['Republican'].apply(lambda x: x.startswith('No candidate'))
+    no_dem = df['Democrat'].apply(lambda x: x.startswith('No candidate'))
+    
+    df.loc[no_dem, 'Democrat Votes'] = 0
+    df.loc[no_rep, 'Republican Votes'] = 0
+    
+    
+    df.loc[no_rep & (df['Democrat Votes']==''), 'Democrat Votes'] = 1
+    df.loc[no_dem & (df['Republican Votes']==''), 'Republican Votes'] = 1
+    
+    return df
+
 
 
 def write_results(race_results, outfile):
@@ -107,22 +134,20 @@ def write_results(race_results, outfile):
         for year, state, results in race_results:
             for election in results:
                 for candidate in election.candidates:
-                    csvwriter.writerow([year, state,candidate.district, candidate.party, candidate.name, candidate.votes, candidate.winner])
+                    csvwriter.writerow([year, state,candidate.district, candidate.party, candidate.name, candidate.votes, candidate.winner, candidate.incumbent])
 
-def scrape_results(url_file, outfile):
-    #wrapper for fetching html/parsing it/writing results to file
-    df = pd.read_csv(url_file)
+def scrape_results():
+    all_results = [('2017',
+                    'New Jersey', 
+                    extract_nj('https://ballotpedia.org/New_Jersey_General_Assembly_elections,_2017')
+                    )
+                   ]
     
-    all_results = []
-    for _, row in df.iterrows():
-        race_results = extract_race_results(row['url'], row['state'])
-        all_results.append((row['year'], row['state'], race_results))
-                
-    write_results(all_results, outfile)
-    return all_results
+    write_results(all_results, 'nj2017.csv')
+    
+    va = extract_va('https://ballotpedia.org/Virginia_House_of_Delegates_elections,_2017')
+    
 
 
 if __name__ == '__main__':
-    url_file = '2017_urls.csv'
-    outfile = '2017_election_results.csv'
-    scrape_results(url_file, outfile)
+    scrape_results()

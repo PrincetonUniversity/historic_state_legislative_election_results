@@ -37,7 +37,6 @@ def fetch_page(url):
 
 
 def pull_races(soup):
-    #find_all_districts
     all_race_divs = soup.find_all(id=re.compile('District_*'))
 
     election_list = []
