@@ -110,8 +110,11 @@ def extract_va(url):
     def find_vote_totals_by_party(x):
         # because some cells have multiple candidates, sum them
         votes = re.findall('(\d+)', x.replace(',', ''))
-        votes = sum([int(i) for i in votes])
-        return str(votes)
+        if len(votes)==0:
+            return ''
+        else:
+            votes = sum([int(i) for i in votes])
+            return str(votes)
 
         
     for party in ['Democrat', 'Republican', 'Other']:

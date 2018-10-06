@@ -56,19 +56,23 @@ def scrape_results(url_file, outfile):
         x = x.split(':')[0] # use everything before the colon
         return x
         
+    
     def find_vote_totals_by_party(x):
         # because some cells have multiple candidates, sum them
         votes = re.findall('(\d+)', x.replace(',', ''))
-        votes = sum([int(i) for i in votes])
-        return str(votes)
+        if len(votes)==0:
+            return ''
+        else:
+            votes = sum([int(i) for i in votes])
+            return str(votes)
 
-        
+    
     for party in ['Democrat', 'Republican', 'Other']:
         index = ~all_results[party].isna()
         all_results.loc[index, party + ' Incumbent'] = all_results.loc[index, party].apply(lambda x: x.find('(I)') != -1)
         all_results.loc[index, party + ' Votes'] = all_results.loc[index, party].apply(find_vote_totals_by_party)
         all_results.loc[index, party] = all_results.loc[index, party].apply(clean_name)
-        
+                
     # take care of vote totals when there is no candidate    
     no_rep = all_results['Republican'].apply(lambda x: x.startswith('No candidate'))
     no_dem = all_results['Democrat'].apply(lambda x: x.startswith('No candidate'))
