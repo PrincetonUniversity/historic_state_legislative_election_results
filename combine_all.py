@@ -35,4 +35,4 @@ all['D Voteshare'] = all['Dem Votes'] / (all['Dem Votes'] + all['GOP Votes'])
 
 columns = ['State', 'Year', 'District', 'Dem Votes', 'GOP Votes', 'D Voteshare', 'Incumbent', 'Party']
 
-all[columns].to_csv('state_legislative_election_results_post1971b.csv', index=False)
+all[columns].to_csv('state_legislative_election_results_post1971.csv', index=False)
