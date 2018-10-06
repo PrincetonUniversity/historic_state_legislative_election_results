@@ -35,11 +35,10 @@ def scrape_results(url_file, outfile):
         general = soup.find('span', {'id': 'General_election'})
         t = general.find_next('table')
         
-        # t = soup.find_all('table', {'class': 'bptable', 'style': 'align: center; border: 0px; background: white; text-align: center; box-shadow: 0px 2px 5px #A0A0A0; width: 100%;'})[0]
-
         df = pd.read_html(str(t))[0][1:]
         df.columns = df.iloc[0]
         df = df.drop(1)
+        
         df = df.set_index(['District'])
         
         df['State'] = state
@@ -47,6 +46,8 @@ def scrape_results(url_file, outfile):
         df.columns.name=None
         
         df = df.loc[[keep_row(i) for i in df.index]]
+        
+        df['District'] = df.index
                 
         all_results = pd.concat([all_results, df], ignore_index=True)
         
@@ -55,15 +56,24 @@ def scrape_results(url_file, outfile):
         x = x.split(':')[0] # use everything before the colon
         return x
         
+    def find_vote_totals_by_party(x):
+        # because some cells have multiple candidates, sum them
+        votes = re.findall('(\d+)', x.replace(',', ''))
+        votes = sum([int(i) for i in votes])
+        return str(votes)
+
+        
     for party in ['Democrat', 'Republican', 'Other']:
         index = ~all_results[party].isna()
         all_results.loc[index, party + ' Incumbent'] = all_results.loc[index, party].apply(lambda x: x.find('(I)') != -1)
-        all_results.loc[index, party + ' Votes'] = all_results.loc[index, party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
+        all_results.loc[index, party + ' Votes'] = all_results.loc[index, party].apply(find_vote_totals_by_party)
         all_results.loc[index, party] = all_results.loc[index, party].apply(clean_name)
         
     # take care of vote totals when there is no candidate    
     no_rep = all_results['Republican'].apply(lambda x: x.startswith('No candidate'))
     no_dem = all_results['Democrat'].apply(lambda x: x.startswith('No candidate'))
+    
+    all_results.loc[no_rep & no_dem * (all_results['Other Votes']==''), 'Other Votes'] = 1
     
     all_results.loc[no_dem, 'Democrat Votes'] = 0
     all_results.loc[no_rep, 'Republican Votes'] = 0

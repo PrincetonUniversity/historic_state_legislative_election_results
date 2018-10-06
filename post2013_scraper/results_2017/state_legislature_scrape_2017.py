@@ -107,20 +107,25 @@ def extract_va(url):
         x = x.split(':')[0] # use everything before the colon
         return x
         
+    def find_vote_totals_by_party(x):
+        # because some cells have multiple candidates, sum them
+        votes = re.findall('(\d+)', x.replace(',', ''))
+        votes = sum([int(i) for i in votes])
+        return str(votes)
+
+        
     for party in ['Democrat', 'Republican', 'Other']:
         index = ~df[party].isna()
         df.loc[index, party + ' Incumbent'] = df.loc[index, party].apply(lambda x: x.find('(I)') != -1)
-        df.loc[index, party + ' Votes'] = df.loc[index, party].apply(lambda x: ''.join([i for i in x if i.isdigit()]))
+        df.loc[index, party + ' Votes'] = df.loc[index, party].apply(find_vote_totals_by_party)
         df.loc[index, party] = df.loc[index, party].apply(clean_name)
 
-    
     # take care of vote totals when there is no candidate    
     no_rep = df['Republican'].apply(lambda x: x.startswith('No candidate'))
     no_dem = df['Democrat'].apply(lambda x: x.startswith('No candidate'))
     
     df.loc[no_dem, 'Democrat Votes'] = 0
     df.loc[no_rep, 'Republican Votes'] = 0
-    
     
     df.loc[no_rep & (df['Democrat Votes']==''), 'Democrat Votes'] = 1
     df.loc[no_dem & (df['Republican Votes']==''), 'Republican Votes'] = 1
@@ -143,17 +148,17 @@ def write_results(race_results, outfile):
                 for candidate in election.candidates:
                     csvwriter.writerow([year, state,candidate.district, candidate.party, candidate.name, candidate.votes, candidate.winner, candidate.incumbent])
 
-def scrape_results():
+def scrape_results(file_nj, file_va):
     all_results = [('2017',
                     'New Jersey', 
                     extract_nj('https://ballotpedia.org/New_Jersey_General_Assembly_elections,_2017')
                     )
                    ]
     
-    write_results(all_results, 'nj2017.csv')
+    write_results(all_results, file_nj)
     
     va = extract_va('https://ballotpedia.org/Virginia_House_of_Delegates_elections,_2017')
-    va.to_csv('va2017.csv')
+    va.to_csv(file_va)
     
 
 
