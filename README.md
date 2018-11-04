@@ -1,4 +1,7 @@
+_Note: The code in this repository is a bit of a mess, and the below documentation may be out of date. However, we are still maintaining the <a href="https://rawgit.com/PrincetonUniversity/historic_state_legislative_election_results/master/state_legislative_election_results_post1971.csv">spreadsheet</a> that you are probably interested in. Please contact us with any questions!_
+
 # State Legislative Elections,  1971 - 2017
+### <a href="https://rawgit.com/PrincetonUniversity/historic_state_legislative_election_results/master/state_legislative_election_results_post1971.csv">Download in CSV (spreadsheet) form</a>
 
 This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2017.
 Candidate information from Carl Klarner's [State Legislative Election Returns dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/20401)
@@ -19,38 +22,27 @@ This dataset is distributed under a [CC0 license](https://creativecommons.org/pu
 ### Input data
 Input data for 1971 - 2012 is drawn from Carl Klarner's SLER 1967 - 2010 dataset, as well as its [2011-2012 extension](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/21549). Some precalculation was done on the 2011-2012 extension; see the Excel file in input_data.
 
-Input data from 2013 - 2016 are Ballotpedia's state assembly election results pages. These pages are scraped using BeautifulSoup, then combined into a single file.
-
-2016 NJ Assembly results are pulled from Ballotpedia. Because the districts are multimember, candidates from each party have been summed together.
-2017 VA House of Delegates election results are pulled from the Virginia Department of Elections.
+Input data from 2013 - 2017 are Ballotpedia's state assembly election results pages. These pages are scraped using BeautifulSoup, then combined into a single file.
 
 ### Output dataset details
-Each row of the output csv file represents an election. n 2013-2017 elections, the party winning the election is identified as Republican, Democrat,
-Independent, Other, or Both. For details on how parties are designated in previous elections, see the codebook accompanying the SLER dataset. "Both" 
-refers to races won by a candidate nominated by both major parties. For winning candidates nominated by a major party and a minor
-party, only their major party is identified. Party vote totals represent the total number of votes received by each party in 
-an election, even if they were split between several candidates.
+Each row of the output csv file represents an election. In 2013-2017 elections, the party winning the election is identified as Republican, Democrat, Independent, Other, or Both. For details on how parties are designated in previous elections, see the codebook accompanying the SLER dataset. "Both" refers to races won by a candidate nominated by both major parties. For winning candidates nominated by a major party and a minor party, only their major party is identified. Party vote totals represent the total number of votes received by each party in  an election, even if they were split between several candidates.
 
 In some elections, the number of votes cast was not recorded. The vast majority of these elections were uncontested races
 in Florida, Oklahoma, or other states where candidates in unopposed races did not or do not appear on the ballot. In these 
 cases, the winning party is assigned 100 votes and all other vote categories are assigned 0 votes.
 
-"-1" in the incumbency column indicates that incumbency is not coded for those elections
+"Incumbency" indicates the party of the incumbent candidate, which could be either D, R, I, or O for "open seat," indicating that no incumbent is running.
 
-In uncontested races from 2013 - 2016, the uncontested candidate is listed as receiving 1 vote when vote totals are not provided.
+In uncontested races from 2013 - 2017, the uncontested candidate is listed as receiving 1 vote when vote totals are not provided.
 
 ### Data Extraction Details
 
 #### Elections excluded from dataset
 Several elections are excluded from the dataset. In particular, Georgia's 2002 election is excluded because it used 
-multi-member districts, and several elections Massachusetts and Maine in the 1970s are excluded because they preceded a large
-change in the legislature size. Excluded elections can be found in elections_to_exclude.csv in the input_data folder.
+multi-member districts, and several elections Massachusetts and Maine in the 1970s are excluded because they preceded a large change in the legislature size. Excluded elections can be found in elections_to_exclude.csv in the input_data folder.
 
 #### Data modifications 
-In several states in the 2011-2012 dataset extension, some candidates ran as candidates for both parties 
-but operated and identified as members of one party. These candidates
-are re-coded with the appropriate party ID 
-in SLERs2011_2012_recoding.csv in the input_data folder.
+In several states in the 2011-2012 dataset extension, some candidates ran as candidates for both parties  but operated and identified as members of one party. These candidates are re-coded with the appropriate party ID  in SLERs2011_2012_recoding.csv in the input_data folder.
 
 #### First election using Single Member Districts, State By State
 
