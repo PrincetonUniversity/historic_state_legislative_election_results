@@ -101,7 +101,7 @@ Arizona
 Idaho   
 Maryland    
 New Hampshire  
-New Jersey (New Jersey 2013, 2015, 2017 elections are included in this dataset)  
+New Jersey (New Jersey 2013, 2015, 2017 elections are included in this dataset. The incumbency information may be unreliable for these races.)  
 North Dakota  
 South Dakota  
 Vermont  
