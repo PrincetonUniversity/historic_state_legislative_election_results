@@ -4,7 +4,8 @@ import numpy as np
 
 files = ['output_data/assembly_cleaned_data_1972_2010.csv',
          'output_data/assembly_cleaned_data_2011_2012.csv',
-         'post2013_scraper/post2013_state_legislative_elections.csv']
+         'post2013_scraper/post2013_state_legislative_elections.csv',
+         '2018_Statehouses_20181203.csv']
 
 dfs = [pd.read_csv(f, dtype='object') for f in files]
 

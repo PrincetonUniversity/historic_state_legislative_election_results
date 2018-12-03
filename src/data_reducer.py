@@ -29,7 +29,7 @@ def SLER_extractor(f, columns_to_extract, header=False,filters=[]):
     reduced_data = []
 
     #open and read the datafile
-    with open(f) as csvfile:
+    with open(f, encoding='mac_roman') as csvfile:
         csvreader = csv.reader(csvfile)
         raw_data = [row for row in csvreader]
 
