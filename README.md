@@ -1,6 +1,6 @@
 _Note: The code in this repository is a bit of a mess, and the below documentation may be out of date. However, we are still maintaining the <a href="https://rawgit.com/PrincetonUniversity/historic_state_legislative_election_results/master/state_legislative_election_results_post1971.csv">spreadsheet</a> that you are probably interested in. Please contact us with any questions!_
 
-# State Legislative Elections,  1971 - 2017
+# State Legislative Elections,  1971 - 2018
 ### <a href="https://rawgit.com/PrincetonUniversity/historic_state_legislative_election_results/master/state_legislative_election_results_post1971.csv">Download in CSV (spreadsheet) form</a>
 
 This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2017.
