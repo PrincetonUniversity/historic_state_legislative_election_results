@@ -3,7 +3,7 @@ _Note: The code in this repository is a bit of a mess, and the below documentati
 # State Legislative Elections,  1971 - 2018
 ### <a href="https://rawgit.com/PrincetonUniversity/historic_state_legislative_election_results/master/state_legislative_election_results_post1971.csv">Download in CSV (spreadsheet) form</a>
 
-This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2017.
+This repo contains results of general elections to the lower house of the state legislatures over the last five decades, from 1971 to 2018.
 Candidate information from Carl Klarner's [State Legislative Election Returns dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/20401)
 was used to compile these election results from 1971 - 2012. For each state, we only extract elections using Single Member districts (see below).
 
